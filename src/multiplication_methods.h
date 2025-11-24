@@ -1,7 +1,8 @@
 #ifndef TIMER_H
 #define MULTIPLICATIONS_METHODS_H
-
-#include "typedefs.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "utils/typedefs.h"
 
 /*
  * Naive polynomial multiplication.

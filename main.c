@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "src/typedefs.h"
-#include "src/utils.h"
-#include "src/timer.h"
-#include "src/timer_log.h"
+#include "src/utils/typedefs.h"
+#include "src/utils/utils.h"
+#include "src/utils/timer.h"
+#include "src/utils/timer_log.h"
 #include "src/multiplication_methods.h"
 
 #define DEBUG 1

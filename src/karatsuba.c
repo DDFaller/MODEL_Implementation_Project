@@ -1,11 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "naive.h"
+#include "multiplication_methods.h"
 
 void Karatsuba (double * P1, double * P2, double * res, int d1, int d2, int k) {
    /* The algorithm must rely on the naive algorithm when polynomials have size at most k. */
     if (d1 < k || d2 < k) {
-        poly_multiplication_classic(P1, P2, d1, d2, res);
+        naive(P1, P2, d1, d2, res);
     } else {
         int m = (d1 > d2 ? d1 : d2) / 2;
         double * P1_ = malloc((m) * sizeof(double));

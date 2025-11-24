@@ -3,9 +3,7 @@
 
 #include <stddef.h>
 
-#define STATUS_OK 0
-#define STATUS_NULL_POINTER 1
-#define STATUS_COMPUTATION_ERROR 2
+
 
 /* 
  * Generate a polynomial of degree n with random coefficients in [-1, 1].
@@ -21,6 +19,10 @@
  * Note:
  *   The caller is responsible for calling free() on the returned pointer.
  */
-int generate_random_polynomial(int n, float * polynomial,int *out_degree);
+int generate_random_polynomial(int n, double * polynomial,int *out_degree);
+
+int calculate_error(int poly_size, const double *A, const double *B, double *param_sum_error);
+
+void print_polynomial(int n, double *coeffs);
 
 #endif /* POLYNOMIAL_H */

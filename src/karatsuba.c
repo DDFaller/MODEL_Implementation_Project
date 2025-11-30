@@ -5,7 +5,7 @@ void Karatsuba (double * P1, double * P2, double * res, int d1, int d2, int k) {
     if (d1 < k || d2 < k) {
         naive(P1, P2, d1, d2, res);
     } else {
-        int m = (d1 > d2 ? d1 : d2) / 2;
+        int m = (d1 > d2 ? d1 : d2) / 2; // could it be (d1 + d2) / 2 ?
         double * P1_ = malloc((m) * sizeof(double));
         double * P2_ = malloc((m) * sizeof(double));
 
@@ -36,7 +36,19 @@ void Karatsuba (double * P1, double * P2, double * res, int d1, int d2, int k) {
         for (int i = 0; i < 2 * (m - 1); i++) {
             R4[i] = R3[i] - R1[i] - R2[i];
         }
-
+        for (int i = 0; i < 2 * (d1 + d2 - 1); i++) {
+            if (i < 2 * (m - 1)) {
+                res[i] = R1[i];
+            } else {
+                res[i] = 0;
+            }
+            if (i - m >= 0 && i - m < 2 * m) {
+                res[i] += R4[i - m];
+            }
+            if (i - 2 * m >= 0 && i - 2 * m < 2 * (m - 1)) {
+                res[i] += R2[i - 2 * m];
+            }
+        }
     }
 
 }

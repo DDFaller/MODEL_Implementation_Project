@@ -7,7 +7,6 @@ gcc -Wall -Wextra -std=c11 \
     main.c \
     src/naive.c \
     src/karatsuba.c \
-    src/tom.c \
     src/utils/timer.c \
     src/utils/timer_log.c \
     src/utils/utils.c \

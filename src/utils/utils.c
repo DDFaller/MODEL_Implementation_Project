@@ -1,5 +1,6 @@
 
 #include "utils.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include "typedefs.h"
@@ -49,7 +50,7 @@ int calculate_error(int poly_size, const double *A, const double *B, double *par
 }
 
 void print_polynomial(int n, double *coeffs){
-    for (int i = 0; i <= n; i++) {
+    for (int i = 0; i < n; i++) {
         printf("coeff[%d] = %f\n", i, coeffs[i]);
     }
 }

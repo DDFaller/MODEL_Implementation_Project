@@ -1,6 +1,9 @@
 #include "multiplication_methods.h"
 #include <stdlib.h>
 
+
+#define USE_NAIVE 4
+
 void Karatsuba (double * P1, double * P2, double * res, int d1, int d2, int k) {
    /* The algorithm must rely on the naive algorithm when polynomials have size at most k. */
     if (d1 < k || d2 < k) {
@@ -53,6 +56,6 @@ void Karatsuba (double * P1, double * P2, double * res, int d1, int d2, int k) {
 }
 
 int karatsuba(int n1, const double *poly1, int n2, const double *poly2, double *product) {
-    Karatsuba((double*)poly1, (double*)poly2, product, n1, n2, 4);
+    Karatsuba((double*)poly1, (double*)poly2, product, n1, n2, USE_NAIVE);
     return STATUS_OK;
 }

@@ -10,6 +10,7 @@ SOURCES = main.c \
           $(SRCDIR)/naive_mpfr.c \
           $(SRCDIR)/karatsuba.c \
           $(SRCDIR)/tom.c \
+          $(SRCDIR)/tom4.c \
           $(UTILSDIR)/utils.c \
           $(UTILSDIR)/timer.c \
           $(UTILSDIR)/timer_log.c

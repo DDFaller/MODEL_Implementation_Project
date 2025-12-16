@@ -28,6 +28,10 @@ void Karatsuba(double * P1, double * P2, double * res, int d1, int d2, int k);
  */
 int tom(double *a, double *b, int tLen, double *z);
 
+int tom4(double *a, double *b, int tLen, double *z);
+
+
+
 /*
  * MPFR high-precision naive multiplication
  */

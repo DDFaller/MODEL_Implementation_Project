@@ -29,10 +29,12 @@ int main(void) {
         double *naive_product  = (double*) malloc((2 * n - 1) * sizeof(double));
         double *karatsuba_product = (double*) malloc((2 * n - 1) * sizeof(double));
         double *tom_product = (double*) malloc((2 * n - 1) * sizeof(double));
+        double *tom4_product = (double*) malloc((2 * n - 1) * sizeof(double));
 
         double naive_timer = 0.0;
         double karatsuba_timer = 0.0;
         double tom_timer = 0.0;
+        double tom4_timer = 0.0;
 
         if (!coeffs || !coeffs2 || !naive_product || !karatsuba_product || !tom_product) {
             fprintf(stderr, "Error: could not allocate polynomial coefficients (n = %d).\n", n);
@@ -107,6 +109,48 @@ int main(void) {
         tom_timer = save_timer();
         timer_log_write("tom3", n, tom_timer);
 
+
+        // ==== TOOM-COOK 4 ====
+        start_timer();
+        int max_size4 = n; // deve essere multiplo di 4
+        double *a4 = calloc(max_size4, sizeof(double));
+        double *b4 = calloc(max_size4, sizeof(double));
+        double *result4 = calloc(max_size4 * 2, sizeof(double)); // NOTA: 2*n (non 2*n-1)
+
+        if (!a4 || !b4 || !result4) {
+            fprintf(stderr, "Error: could not allocate Toom4 buffers (n=%d).\n", n);
+            free(a4); free(b4); free(result4);
+            // gestisci come preferisci: return o status error
+            timer_log_close();
+            return STATUS_COMPUTATION_ERROR;
+        }
+
+        for (int j = 0; j < n; j++) {
+            a4[j] = coeffs[j];
+            b4[j] = coeffs2[j];
+        }
+
+        // chiama tom4
+        status = tom4(a4, b4, max_size4, result4);
+
+        // copia solo i primi 2*n-1 coefficienti “veri”
+        for (int j = 0; j < 2 * n - 1; j++) {
+            tom4_product[j] = result4[j];
+        }
+
+        free(a4);
+        free(b4);
+        free(result4);
+
+        if (status != STATUS_OK) {
+            fprintf(stderr, "Error processing tom4 multiplication (status = %d)\n", status);
+        }
+        end_timer();
+        tom4_timer = save_timer();
+        timer_log_write("tom4", n, tom4_timer);
+
+
+
         // ==== ERROR COMPARISON ====
         if (n <= 64) {
             double error_sum = 0.0;
@@ -118,6 +162,7 @@ int main(void) {
                 printf("Karatsuba results match within tolerance.\n");
             }
 
+
             printf("--- Comparing Naive vs Toom-Cook 3 (n=%d) ---\n", n);
             status = calculate_error(2 * n - 1, naive_product, tom_product, &error_sum);
             if (status != STATUS_OK) {
@@ -125,15 +170,25 @@ int main(void) {
             } else {
                 printf("Toom-Cook 3 results match within tolerance.\n");
             }
+
+
+            printf("--- Comparing Naive vs Toom-Cook 4 (n=%d) ---\n", n);
+            status = calculate_error(2 * n - 1, naive_product, tom4_product, &error_sum);
+            if (status != STATUS_OK) {
+                printf("WARNING: Significant error detected between naive and tom4 results!\n");
+            } else {
+                printf("Toom-Cook 4 results match within tolerance.\n");
+            }
         }
 
         if (DEBUG && n <= 16) {
             printf("Naive time: %f s\n", naive_timer);
             printf("Karatsuba time: %f s\n", karatsuba_timer);
             printf("Toom-Cook 3 time: %f s\n", tom_timer);
+            printf("Toom-Cook 4 time: %f s\n", tom4_timer);
         } else {
-            printf("n=%d: Naive=%.6fs, Karatsuba=%.6fs, Tom3=%.6fs\n", 
-                   n, naive_timer, karatsuba_timer, tom_timer);
+            printf("n=%d: Naive=%.6fs, Karatsuba=%.6fs, Tom3=%.6fs, Tom4=%.6fs\n",
+                n, naive_timer, karatsuba_timer, tom_timer, tom4_timer);
         }
 
         free(coeffs);
@@ -141,6 +196,7 @@ int main(void) {
         free(naive_product);
         free(karatsuba_product);
         free(tom_product);
+        free(tom4_product);
     }
 
     timer_log_close();

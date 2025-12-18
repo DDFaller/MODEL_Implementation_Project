@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include "utils/typedefs.h"
 
+// Cutoff values for each algorithm
+extern const int KARATSUBA_CUTOFF;
+extern const int TOOM3_CUTOFF;
+extern const int TOOM4_CUTOFF;
+
 /*
  * Naive polynomial multiplication.
  * A has size n1, B has size n2, result has size (n1 + n2 - 1).
@@ -20,7 +25,7 @@ int karatsuba(int n1, const double *poly1,
                 int n2, const double *poly2,
                 double *product);
 
-void Karatsuba(double * P1, double * P2, double * res, int d1, int d2, int k);
+void Karatsuba(double * P1, double * P2, int d1, int d2, int k, double * res);
 
 /*
  * Toom-Cook 3 polynomial multiplication.
@@ -28,9 +33,11 @@ void Karatsuba(double * P1, double * P2, double * res, int d1, int d2, int k);
  */
 int tom(double *a, double *b, int tLen, double *z);
 
+/*
+ * Toom-Cook 4 polynomial multiplication.
+ * A has size tLen, B has size tLen, result has size (tLen * 2).
+ */
 int tom4(double *a, double *b, int tLen, double *z);
-
-
 
 /*
  * MPFR high-precision naive multiplication

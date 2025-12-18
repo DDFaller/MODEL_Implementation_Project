@@ -3,8 +3,6 @@
 
 /*
  * Simple helper to log timing information into a CSV file.
- * The CSV format is:
- *   function_name,poly_size,time_seconds
  */
 
 #include <stdio.h>
@@ -14,7 +12,11 @@
  * The file is opened in write mode ("w"), and a header line is written.
  * Returns 0 on success, -1 on failure.
  */
+/* CSV format: function_name,poly_size,time_seconds */
 int timer_log_init(const char *filename);
+
+/* CSV format: function_name,poly_size,time_seconds,k */
+int timer_log_init_with_k(const char *filename);
 
 /*
  * Writes one timing record to the CSV file.

@@ -25,6 +25,23 @@ int timer_log_init(const char *filename) {
     }
 
     /* Write CSV header */
+    fprintf(timer_log_file, "function_name,poly_size,time_seconds\n");
+    fflush(timer_log_file);
+
+    return 0;
+}
+
+int timer_log_init_with_k(const char *filename) {
+    if (filename == NULL) {
+        return -1;
+    }
+
+    timer_log_file = fopen(filename, "w");
+    if (timer_log_file == NULL) {
+        return -1;
+    }
+
+    /* Write CSV header */
     fprintf(timer_log_file, "function_name,poly_size,time_seconds,k\n");
     fflush(timer_log_file);
 

@@ -231,7 +231,7 @@ int main(void) {
         TOOM4_CUTOFF = current_k;
         for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-            int n = 4096 + k_index+sample;
+            int n = 4096;
 
             double *P1 = (double*)malloc((size_t)n * sizeof(double));
             double *P2 = (double*)malloc((size_t)n * sizeof(double));

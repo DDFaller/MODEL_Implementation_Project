@@ -228,7 +228,7 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 13; k_index < 100; k_index = k_index + 4) {
+        for (int k_index = 13; k_index < 100; k_index = k_index + 2) {
             int current_k = k_index;
             KARATSUBA_CUTOFF = current_k;
             TOOM3_CUTOFF = current_k;

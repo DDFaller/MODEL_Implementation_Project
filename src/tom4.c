@@ -16,7 +16,7 @@ static int tom4_rec(double *a, double *b, int tLen, double *z, int cutoff, Arena
     if (!a || !b || !z || tLen <= 0) return -1;
 
     if (tLen <= cutoff) {
-        return naive(tLen, a, tLen, b, z);
+        return tom(a, b, tLen, z);
     }
 
     const int outLen = 2 * tLen - 1;

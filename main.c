@@ -18,7 +18,7 @@ int main(void) {
         fprintf(stderr, "Warning: could not open timings.csv for writing. Timing data will not be saved.\n");
     }
 
-    int size_of_polynomials[] = {4, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
+    int size_of_polynomials[] = {4, 16, 30, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
     int amount_of_sizes = sizeof(size_of_polynomials) / sizeof(size_of_polynomials[0]);
 
     for (int i = 0; i < amount_of_sizes; i++) {
@@ -26,10 +26,15 @@ int main(void) {
 
         double *coeffs         = (double*) malloc(n * sizeof(double));
         double *coeffs2        = (double*) malloc(n * sizeof(double));
-        double *naive_product  = (double*) malloc((2 * n - 1) * sizeof(double));
-        double *karatsuba_product = (double*) malloc((2 * n - 1) * sizeof(double));
-        double *tom_product = (double*) malloc((2 * n - 1) * sizeof(double));
-        double *tom4_product = (double*) malloc((2 * n - 1) * sizeof(double));
+        double *naive_product  = (double*) calloc((2 * n), sizeof(double));
+        double *karatsuba_product = (double*) calloc((2 * n), sizeof(double));
+        double *tom_product = (double*) calloc((2 * n), sizeof(double));
+        double *tom4_product = (double*) calloc((2 * n), sizeof(double));
+
+        memset(naive_product,     0, 2*n*sizeof(double));
+        memset(karatsuba_product, 0, 2*n*sizeof(double));
+        memset(tom_product,       0, 2*n*sizeof(double));
+        memset(tom4_product,      0, 2*n*sizeof(double));
 
         double naive_timer = 0.0;
         double karatsuba_timer = 0.0;
@@ -51,7 +56,7 @@ int main(void) {
         generate_random_polynomial(n, coeffs,  &degree);
         generate_random_polynomial(n, coeffs2, &degree);
 
-        if (DEBUG && n <= 16) {
+        if (DEBUG && n <= 32) {
             printf("\n=== n = %d ===\n", n);
             printf("--- Polynomial 1 ---\n");
             print_polynomial(n, coeffs);
@@ -149,6 +154,13 @@ int main(void) {
         tom4_timer = save_timer();
         timer_log_write("tom4", n, tom4_timer);
 
+
+        if (n == 16) {
+            for (int j=0; j<10; j++)
+                printf("j=%d naive=% .6f kara=% .6f diff=% .6f\n",
+                    j, naive_product[j], karatsuba_product[j],
+                    naive_product[j]-karatsuba_product[j]);
+        }
 
 
         // ==== ERROR COMPARISON ====

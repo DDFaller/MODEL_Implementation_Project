@@ -1,4 +1,4 @@
-#ifndef TIMER_H
+#ifndef MULTIPLICATION_METHODS_H
 #define MULTIPLICATIONS_METHODS_H
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,4 +39,4 @@ int naive_mpfr(int n1, const char **poly1_str, int n2, const char **poly2_str, c
 
 int naive_mpfr_from_double(int n1, double *poly1_d, int n2, double *poly2_d, double *product_d, int precision);
 
-#endif /* TIMER_H */
+#endif /* MULTIPLICATION_METHODS_H */

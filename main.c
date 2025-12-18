@@ -226,14 +226,14 @@ int main(void) {
         fprintf(stderr, "Warning: could not open timings_k.csv for writing. Timing data will not be saved.\n");
     }
 
-    for (int k_index = 0; k_index < 100; k_index++) {
+    for (int k_index = 0; k_index < 100; k_index = k_index + 4) {
         int current_k = k_index;
         KARATSUBA_CUTOFF = current_k;
         TOOM3_CUTOFF = current_k;
         TOOM4_CUTOFF = current_k;
         for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-            int n = 4096;//48
+            int n = 8009;
 
             double *P1 = (double*)malloc((size_t)n * sizeof(double));
             double *P2 = (double*)malloc((size_t)n * sizeof(double));

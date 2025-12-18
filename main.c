@@ -230,7 +230,6 @@ int main(void) {
 
         for (int k_index = 13; k_index < 100; k_index = k_index + 2) {
             int current_k = k_index;
-            KARATSUBA_CUTOFF = current_k;
             TOOM3_CUTOFF = current_k;
             TOOM4_CUTOFF = current_k;
 

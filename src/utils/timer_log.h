@@ -22,7 +22,11 @@ int timer_log_init(const char *filename);
  *  - poly_size: size of the polynomial (number of coefficients)
  *  - time_seconds: measured time in seconds
  */
+void timer_log_write_cutoff(const char *func_name, int poly_size, double time_seconds, int k);
+
+
 void timer_log_write(const char *func_name, int poly_size, double time_seconds);
+
 
 /*
  * Closes the CSV log file if it is open.

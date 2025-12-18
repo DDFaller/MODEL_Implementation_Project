@@ -5,9 +5,9 @@
 #include "utils/typedefs.h"
 
 // Cutoff values for each algorithm
-extern const int KARATSUBA_CUTOFF;
-extern const int TOOM3_CUTOFF;
-extern const int TOOM4_CUTOFF;
+extern int KARATSUBA_CUTOFF;
+extern int TOOM3_CUTOFF;
+extern int TOOM4_CUTOFF;
 
 /*
  * Naive polynomial multiplication.

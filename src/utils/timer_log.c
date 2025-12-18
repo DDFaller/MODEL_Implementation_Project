@@ -25,11 +25,31 @@ int timer_log_init(const char *filename) {
     }
 
     /* Write CSV header */
-    fprintf(timer_log_file, "function_name,poly_size,time_seconds\n");
+    fprintf(timer_log_file, "function_name,poly_size,time_seconds,k\n");
     fflush(timer_log_file);
 
     return 0;
 }
+
+/*
+ * Writes a single row to the CSV file.
+ * Each call appends one line with the given data.
+ */
+void timer_log_write_cutoff(const char *func_name, int poly_size, double time_seconds, int cutoff) {
+    if (timer_log_file == NULL) {
+        /* If the file is not initialized, there is nothing we can do. */
+        return;
+    }
+
+    if (func_name == NULL) {
+        func_name = "unknown";
+    }
+
+    /* CSV line: function_name,poly_size,time_seconds */
+    fprintf(timer_log_file, "%s,%d,%.9f,%d\n", func_name, poly_size, time_seconds, cutoff);
+    fflush(timer_log_file);
+}
+
 
 /*
  * Writes a single row to the CSV file.
@@ -49,6 +69,7 @@ void timer_log_write(const char *func_name, int poly_size, double time_seconds) 
     fprintf(timer_log_file, "%s,%d,%.9f\n", func_name, poly_size, time_seconds);
     fflush(timer_log_file);
 }
+
 
 /*
  * Closes the CSV file and resets the internal pointer.

@@ -228,7 +228,7 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 0; k_index < 100; k_index = k_index + 4) {
+        for (int k_index = 13; k_index < 100; k_index = k_index + 4) {
             int current_k = k_index;
             KARATSUBA_CUTOFF = current_k;
             TOOM3_CUTOFF = current_k;
@@ -263,27 +263,27 @@ int main(void) {
             generate_random_polynomial(n, P2, &degree);
 
             // ==== KARATSUBA ====
-            memset(karatsuba_res, 0, (size_t)(2 * n - 1) * sizeof(double));
-            start_timer();
-            status = karatsuba(n, P1, n, P2, karatsuba_res);
-            end_timer();
-            karatsuba_timer = save_timer();
-            timer_log_write_cutoff("karatsuba_k", n, karatsuba_timer, current_k);
+            // memset(karatsuba_res, 0, (size_t)(2 * n - 1) * sizeof(double));
+            // start_timer();
+            // status = karatsuba(n, P1, n, P2, karatsuba_res);
+            // end_timer();
+            // karatsuba_timer = save_timer();
+            // timer_log_write_cutoff("karatsuba_k", n, karatsuba_timer, current_k);
 
-            printf("k=%d (n=%d): Karatsuba=%.9fs\n", current_k, n, karatsuba_timer);
-            if (status != STATUS_OK) {
-                fprintf(stderr, "Error processing karatsuba multiplication (status = %d)\n", status);
-            }
+            // printf("k=%d (n=%d): Karatsuba=%.9fs\n", current_k, n, karatsuba_timer);
+            // if (status != STATUS_OK) {
+            //     fprintf(stderr, "Error processing karatsuba multiplication (status = %d)\n", status);
+            // }
 
             // // ==== TOOM-COOK 3 ====
-            // memset(toom3_res, 0, (size_t)(2 * n - 1) * sizeof(double));
-            // start_timer();
-            // tom(P1, P2, n, toom3_res);    
-            // end_timer();
-            // toom3_timer = save_timer();
-            // timer_log_write_cutoff("toom3_k", n, toom3_timer, current_k);
+            memset(toom3_res, 0, (size_t)(2 * n - 1) * sizeof(double));
+            start_timer();
+            tom(P1, P2, n, toom3_res);    
+            end_timer();
+            toom3_timer = save_timer();
+            timer_log_write_cutoff("toom3_k", n, toom3_timer, current_k);
 
-            // printf("k=%d (n=%d): Toom3=%.6fs\n", current_k, n, toom3_timer);
+            printf("k=%d (n=%d): Toom3=%.6fs\n", current_k, n, toom3_timer);
 
             // // ==== TOOM-COOK 4 ====
             // memset(toom4_res, 0, (size_t)(2 * n - 1) * sizeof(double));

@@ -15,7 +15,7 @@ ALT_CSV = BASE / "timings_k.csv"
 PLOTS_DIR = BASE / "plots"
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
-POLY_MAX = 4096
+POLY_MAX = 8009
 
 csv_path = CSV_DEFAULT if CSV_DEFAULT.exists() else ALT_CSV
 if not csv_path.exists():

@@ -233,7 +233,7 @@ int main(void) {
             TOOM3_CUTOFF = current_k;
             TOOM4_CUTOFF = current_k;
 
-            int n = 8009;
+            int n = 50000;
 
             double *P1 = (double*)malloc((size_t)n * sizeof(double));
             double *P2 = (double*)malloc((size_t)n * sizeof(double));

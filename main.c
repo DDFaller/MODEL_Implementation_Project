@@ -225,13 +225,14 @@ int main(void) {
     if (timer_log_init_with_k("csvs/timings_k.csv") != 0) {
         fprintf(stderr, "Warning: could not open timings_k.csv for writing. Timing data will not be saved.\n");
     }
+    
+    for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-    for (int k_index = 0; k_index < 100; k_index = k_index + 4) {
-        int current_k = k_index;
-        KARATSUBA_CUTOFF = current_k;
-        TOOM3_CUTOFF = current_k;
-        TOOM4_CUTOFF = current_k;
-        for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
+        for (int k_index = 0; k_index < 100; k_index = k_index + 4) {
+            int current_k = k_index;
+            KARATSUBA_CUTOFF = current_k;
+            TOOM3_CUTOFF = current_k;
+            TOOM4_CUTOFF = current_k;
 
             int n = 8009;
 

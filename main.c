@@ -226,7 +226,7 @@ int main(void) {
         fprintf(stderr, "Warning: could not open timings_k.csv for writing. Timing data will not be saved.\n");
     }
 
-    for (int k_index = 0; k_index < 100 / sizeof(Ks[0])); k_index++) {
+    for (int k_index = 0; k_index < 100; k_index++) {
         int current_k = k_index;
         KARATSUBA_CUTOFF = current_k;
         TOOM3_CUTOFF = current_k;

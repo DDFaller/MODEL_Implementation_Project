@@ -228,9 +228,8 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 13; k_index < 200; k_index = k_index + 7) {
+        for (int k_index = 33; k_index < 200; k_index = k_index + 5) {
             int current_k = k_index;
-            TOOM3_CUTOFF = current_k;
             TOOM4_CUTOFF = current_k;
 
             int n = 15000;
@@ -274,27 +273,25 @@ int main(void) {
             //     fprintf(stderr, "Error processing karatsuba multiplication (status = %d)\n", status);
             // }
 
-            // // ==== TOOM-COOK 3 ====
-            memset(toom3_res, 0, (size_t)(2 * n - 1) * sizeof(double));
-            start_timer();
-            tom(P1, P2, n, toom3_res);    
-            end_timer();
-            toom3_timer = save_timer();
-            timer_log_write_cutoff("toom3_k", n, toom3_timer, current_k);
+            // // // ==== TOOM-COOK 3 ====
+            // memset(toom3_res, 0, (size_t)(2 * n - 1) * sizeof(double));
+            // start_timer();
+            // tom(P1, P2, n, toom3_res);    
+            // end_timer();
+            // toom3_timer = save_timer();
+            // timer_log_write_cutoff("toom3_k", n, toom3_timer, current_k);
 
-            printf("k=%d (n=%d): Toom3=%.6fs\n", current_k, n, toom3_timer);
+            // printf("k=%d (n=%d): Toom3=%.6fs\n", current_k, n, toom3_timer);
 
             // // ==== TOOM-COOK 4 ====
-            // memset(toom4_res, 0, (size_t)(2 * n - 1) * sizeof(double));
-            // start_timer();
-            // tom(P1, P2, n, toom4_res);    
-            // end_timer();
-            // toom4_timer = save_timer();
-            // timer_log_write_cutoff("toom4_k", n, toom4_timer, current_k);
+            memset(toom4_res, 0, (size_t)(2 * n - 1) * sizeof(double));
+            start_timer();
+            tom(P1, P2, n, toom4_res);    
+            end_timer();
+            toom4_timer = save_timer();
+            timer_log_write_cutoff("toom4_k", n, toom4_timer, current_k);
 
-            // printf("k=%d (n=%d): Toom4=%.6fs\n", current_k, n, toom4_timer);
-
-
+            printf("k=%d (n=%d): Toom4=%.6fs\n", current_k, n, toom4_timer);
 
 
             free(P1);

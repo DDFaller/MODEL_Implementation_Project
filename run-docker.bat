@@ -1,2 +1,2 @@
 @echo off
-docker run -it --rm -v "%cd%" model-c
+docker run -it --rm -v "%cd%":/work model-c

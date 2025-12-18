@@ -11,7 +11,7 @@
 #include "src/tests/test_framework.h"
 
 #define DEBUG 1
-#define SAMPLE_SIZE 50
+#define SAMPLE_SIZE 10
 
 int main(void) {
     // Run unit tests first
@@ -228,11 +228,11 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 33; k_index < 200; k_index = k_index + 5) {
+        for (int k_index = 33; k_index < 1000; k_index = k_index + 10) {
             int current_k = k_index;
             TOOM4_CUTOFF = current_k;
 
-            int n = 15000;
+            int n = 50000;
 
             double *P1 = (double*)malloc((size_t)n * sizeof(double));
             double *P2 = (double*)malloc((size_t)n * sizeof(double));

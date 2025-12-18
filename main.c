@@ -228,12 +228,12 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 13; k_index < 40; k_index = k_index + 1) {
+        for (int k_index = 13; k_index < 200; k_index = k_index + 7) {
             int current_k = k_index;
             TOOM3_CUTOFF = current_k;
             TOOM4_CUTOFF = current_k;
 
-            int n = 50000;
+            int n = 15000;
 
             double *P1 = (double*)malloc((size_t)n * sizeof(double));
             double *P2 = (double*)malloc((size_t)n * sizeof(double));

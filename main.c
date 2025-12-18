@@ -11,7 +11,7 @@
 #include "src/tests/test_framework.h"
 
 #define DEBUG 1
-#define SAMPLE_SIZE 10
+#define SAMPLE_SIZE 50
 
 int main(void) {
     // Run unit tests first
@@ -228,7 +228,7 @@ int main(void) {
     
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
-        for (int k_index = 33; k_index < 1000; k_index = k_index + 10) {
+        for (int k_index = 33; k_index < 250; k_index = k_index + 10) {
             int current_k = k_index;
             TOOM4_CUTOFF = current_k;
 

@@ -13,11 +13,10 @@ static size_t tom_ws_needed(int tLen, int cutoff) {
 }
 
 static int tom_rec(double *a, double *b, int tLen, double *z, int cutoff, Arena *arena) {
+    
     if (tLen <= TOOM3_CUTOFF) {
         return karatsuba(tLen, a, tLen, b, z);
     }
-
-
     
     size_t mark = arena_mark(arena);
     const int outLen = 2 * tLen - 1;

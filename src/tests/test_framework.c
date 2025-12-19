@@ -41,16 +41,24 @@ int run_all_tests(void) {
     printf("Running Unit Tests...\n");
     printf("====================\n");
     
+
     TestResult naive_result = test_naive_multiplication();
     TestResult karatsuba_result = test_karatsuba_multiplication();
     TestResult toom_result = test_toom_cook_multiplication();
     TestResult tom4_result = test_tom4_multiplication();
     
+    TestResult naive_mpfr_result = test_naive_mpfr_multiplication();
+
     int total_passed = naive_result.passed + karatsuba_result.passed + toom_result.passed + tom4_result.passed;
     int total_failed = naive_result.failed + karatsuba_result.failed + toom_result.failed + tom4_result.failed;
     
+
+
+    
+    
     printf("\n====================\n");
     printf("Overall Results: %d passed, %d failed\n", total_passed, total_failed);
+    printf("MPFR comparison results: %d passed, %d failed\n", naive_mpfr_result.passed, naive_mpfr_result.failed);
     
     if (total_failed == 0) {
         printf("All tests PASSED! ✓\n\n");

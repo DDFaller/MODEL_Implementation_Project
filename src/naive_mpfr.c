@@ -1,6 +1,9 @@
 #include "multiplication_methods.h"
 #include <mpfr.h>
 
+#define MPFR_REF_PREC 4096
+#define MPFR_ERROR 256
+
 int naive_mpfr(int n1, const char **poly1_str, int n2, const char **poly2_str, char **product_str, int precision) {
     int nProd = n1 + n2 - 1;
     
@@ -95,3 +98,5 @@ int naive_mpfr_from_double(int n1, double *poly1_d, int n2, double *poly2_d, dou
     
     return status;
 }
+
+

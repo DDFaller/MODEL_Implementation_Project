@@ -9,6 +9,7 @@
 #include "src/utils/timer_log.h"
 #include "src/multiplication_methods.h"
 #include "src/tests/test_framework.h"
+#include "src/mpfr_poly.h"
 
 #define DEBUG 1
 #define SAMPLE_SIZE 50
@@ -24,17 +25,20 @@ int main(void) {
     printf("=== PERFORMANCE MEASUREMENTS ===\n");
     srand((unsigned int)time(NULL));
 
-    if (timer_log_init("csvs/timings.csv") != 0) {
-        fprintf(stderr, "Warning: could not open timings.csv for writing. Timing data will not be saved.\n");
-    }
+    
 
     // Karatsuba vs all {2, 4, 8, 12, 16, 24, 32} //16 - 64
     // Toom3 vs all {48, 64, 81, 96, 128, 162, 192, 243, 256}// 128 - 256
     // Toom4 vs all {256, 300, 384, 512, 768, 1024, 1536, 2048, 3072, 4096, 4448, 5120}// 2048
-    int size_of_polynomials[] = {2};
+    int size_of_polynomials[] = {48, 64, 81, 96, 128, 192, 256, 512, 768, 1024, 1536, 2048, 3072, 4096, 4448, 5120, 4096*2, 10240, 12800, 16384};
     int Ks[] = {4,6,8,12,16,32,48,64,80,96};
     int amount_of_sizes = (int)(sizeof(size_of_polynomials) / sizeof(size_of_polynomials[0]));
+    goto ERROR_PERFORMANCE;
 
+TIME_PERFOMANCE:
+    if (timer_log_init("csvs/timings.csv") != 0) {
+        fprintf(stderr, "Warning: could not open timings.csv for writing. Timing data will not be saved.\n");
+    }
     for (int i = 0; i < amount_of_sizes; i++) {
         const int n = size_of_polynomials[i];
 
@@ -219,13 +223,14 @@ int main(void) {
         }
     }
 
-
     timer_log_close();
+    goto FINISH;
 
     if (timer_log_init_with_k("csvs/timings_k.csv") != 0) {
         fprintf(stderr, "Warning: could not open timings_k.csv for writing. Timing data will not be saved.\n");
     }
     
+K_PERFORMANCE:
     for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
 
         for (int k_index = 33; k_index < 250; k_index = k_index + 10) {
@@ -303,6 +308,151 @@ int main(void) {
     }
 
     timer_log_close();
+    goto FINISH;
 
+ERROR_PERFORMANCE:
+
+    if (error_log_init("csvs/errors.csv") != 0) {
+        fprintf(stderr, "Warning: could not open errors.csv for writing. Error data will not be saved.\n");
+    }
+
+for (int i = 0; i < amount_of_sizes; i++) {
+        const int n = size_of_polynomials[i];
+
+        for (int sample = 0; sample < SAMPLE_SIZE; sample++) {
+
+            double *coeffs            = (double*)malloc((size_t)n * sizeof(double));
+            double *coeffs2           = (double*)malloc((size_t)n * sizeof(double));
+            double *naive_product     = (double*)malloc((size_t)(2 * n - 1) * sizeof(double));
+            double *karatsuba_product = (double*)malloc((size_t)(2 * n - 1) * sizeof(double));
+            double *tom_product       = (double*)malloc((size_t)(2 * n - 1) * sizeof(double));
+            double *tom4_product      = (double*)malloc((size_t)(2 * n - 1) * sizeof(double));
+
+            if (!coeffs || !coeffs2 || !naive_product || !karatsuba_product || !tom_product || !tom4_product) {
+                fprintf(stderr, "Error: could not allocate polynomial buffers (n = %d).\n", n);
+                free(coeffs);
+                free(coeffs2);
+                free(naive_product);
+                free(karatsuba_product);
+                free(tom_product);
+                free(tom4_product);
+                timer_log_close();
+                return STATUS_COMPUTATION_ERROR;
+            }
+
+            int degree;
+            generate_random_polynomial(n, coeffs, &degree);
+            generate_random_polynomial(n, coeffs2, &degree);
+
+            int status;
+            // ==== NAIVE ====
+            memset(naive_product, 0, (size_t)(2 * n - 1) * sizeof(double));
+            status = naive(n, coeffs, n, coeffs2, naive_product);
+            if (status != STATUS_OK) {
+                fprintf(stderr, "Error processing naive multiplication (status = %d)\n", status);
+            }
+
+            // ==== KARATSUBA ====
+            memset(karatsuba_product, 0, (size_t)(2 * n - 1) * sizeof(double));
+            status = karatsuba(n, coeffs, n, coeffs2, karatsuba_product);
+            if (status != STATUS_OK) {
+                fprintf(stderr, "Error processing karatsuba multiplication (status = %d)\n", status);
+            }
+
+            // ==== TOOM-COOK 3 ====
+            memset(tom_product, 0, (size_t)(2 * n - 1) * sizeof(double));
+            start_timer();
+            {
+                int max_size = n;
+                double *a = (double*)calloc((size_t)max_size, sizeof(double));
+                double *b = (double*)calloc((size_t)max_size, sizeof(double));
+                double *result = (double*)calloc((size_t)(2 * max_size), sizeof(double)); // safe length
+
+                if (!a || !b || !result) {
+                    fprintf(stderr, "Error: could not allocate Toom3 buffers (n=%d).\n", n);
+                    free(a); free(b); free(result);
+                    free(coeffs); free(coeffs2);
+                    free(naive_product); free(karatsuba_product); free(tom_product); free(tom4_product);
+                    timer_log_close();
+                    return STATUS_COMPUTATION_ERROR;
+                }
+
+                for (int j = 0; j < n; j++) {
+                    a[j] = coeffs[j];
+                    b[j] = coeffs2[j];
+                }
+
+                status = tom(a, b, max_size, result);
+
+                for (int j = 0; j < 2 * n - 1; j++) {
+                    tom_product[j] = result[j];
+                }
+
+                free(a);
+                free(b);
+                free(result);
+            }
+            if (status != STATUS_OK) {
+                fprintf(stderr, "Error processing tom3 multiplication (status = %d)\n", status);
+            }
+
+            // ==== TOOM-COOK 4 ====
+            memset(tom4_product, 0, (size_t)(2 * n - 1) * sizeof(double));
+            {
+                int max_size4 = n;
+                double *a4 = (double*)calloc((size_t)max_size4, sizeof(double));
+                double *b4 = (double*)calloc((size_t)max_size4, sizeof(double));
+                double *result4 = (double*)calloc((size_t)(2 * max_size4), sizeof(double)); // safe length
+
+                if (!a4 || !b4 || !result4) {
+                    fprintf(stderr, "Error: could not allocate Toom4 buffers (n=%d).\n", n);
+                    free(a4); free(b4); free(result4);
+                    free(coeffs); free(coeffs2);
+                    free(naive_product); free(karatsuba_product); free(tom_product); free(tom4_product);
+                    timer_log_close();
+                    return STATUS_COMPUTATION_ERROR;
+                }
+
+                for (int j = 0; j < n; j++) {
+                    a4[j] = coeffs[j];
+                    b4[j] = coeffs2[j];
+                }
+
+                status = tom4(a4, b4, max_size4, result4);
+
+                for (int j = 0; j < 2 * n - 1; j++) {
+                    tom4_product[j] = result4[j];
+                }
+
+                free(a4);
+                free(b4);
+                free(result4);
+            }
+            if (status != STATUS_OK) {
+                fprintf(stderr, "Error processing tom4 multiplication (status = %d)\n", status);
+            }
+
+
+            
+            product_error_stats_t functions_error = run_one_case(coeffs, n, coeffs2, n, naive_product, karatsuba_product, tom_product, tom4_product);
+
+            error_log("csvs/errors.csv", "naive", n, functions_error.naive.max_abs_err, functions_error.naive.l2_abs_err);
+            error_log("csvs/errors.csv", "karatsuba", n, functions_error.karatsuba.max_abs_err, functions_error.karatsuba.l2_abs_err);
+            error_log("csvs/errors.csv", "toom3", n, functions_error.toom3.max_abs_err, functions_error.toom3.l2_abs_err);
+            error_log("csvs/errors.csv", "toom4", n, functions_error.toom4.max_abs_err, functions_error.toom4.l2_abs_err);
+
+
+            free(coeffs);
+            free(coeffs2);
+            free(naive_product);
+            free(karatsuba_product);
+            free(tom_product);
+            free(tom4_product);
+        }
+    }
+    timer_log_close();
+    goto FINISH;
+
+FINISH:
     return STATUS_OK;
 }

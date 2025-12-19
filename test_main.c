@@ -4,6 +4,7 @@
 #include "src/tests/test_framework.h"
 #include "src/multiplication_methods.h"
 #include "src/utils/utils.h"
+#include "src/mpfr_poly.h"
 
 void print_polynomial_formatted(int n, double *coeffs, const char *name) {
     printf("%s(x) = ", name);
@@ -38,7 +39,7 @@ void interactive_test() {
         printf("Option: ");
         scanf("%d", &choice);
         
-        double *poly1, *poly2, *naive_result, *karatsuba_result, *tom_result, *tom4_result;
+        double *poly1, *poly2, *naive_result, *karatsuba_result, *tom_result, *tom4_result, *naive_mpfr_result;
         int n1, n2;
         
         switch(choice) {
@@ -117,7 +118,7 @@ void interactive_test() {
             karatsuba_result = malloc((n1 + n2 - 1) * sizeof(double));
             tom_result = malloc((n1 + n2 - 1) * sizeof(double));
             tom4_result = malloc((n1 + n2 - 1) * sizeof(double));
-            
+
             // Execute multiplications
             naive(n1, poly1, n2, poly2, naive_result);
             karatsuba(n1, poly1, n2, poly2, karatsuba_result);
@@ -162,6 +163,8 @@ void interactive_test() {
             print_polynomial_formatted(n1 + n2 - 1, tom_result, "Toom-Cook 3");
             print_polynomial_formatted(n1 + n2 - 1, tom4_result, "Toom-Cook 4");
             
+
+
             // Check differences
             printf("\n--- VERIFICATION ---\n");
             double error_k = 0, error_t = 0, error_t4 = 0;
@@ -169,6 +172,7 @@ void interactive_test() {
                 error_k += fabs(naive_result[i] - karatsuba_result[i]);
                 error_t += fabs(naive_result[i] - tom_result[i]);
                 error_t4 += fabs(naive_result[i] - tom4_result[i]);
+
             }
             
             printf("Karatsuba vs Naive error: %.2e\n", error_k);
@@ -180,12 +184,6 @@ void interactive_test() {
             } else {
                 printf("⚠ There are differences between algorithms!\n");
             }
-            
-            // Free memory
-            free(poly1); free(poly2);
-            free(naive_result); free(karatsuba_result); free(tom_result); free(tom4_result);
-            free(a); free(b); free(tom_full_result);
-            free(a4); free(b4); free(tom4_full_result);
         }
         
     } while (choice != 0);

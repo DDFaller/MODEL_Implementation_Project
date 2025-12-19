@@ -27,6 +27,7 @@ TestResult test_naive_multiplication(void);
 TestResult test_karatsuba_multiplication(void);
 TestResult test_toom_cook_multiplication(void);
 TestResult test_tom4_multiplication(void);
+TestResult test_naive_mpfr_multiplication(void);
 
 // Main test runner
 int run_all_tests(void);

@@ -31,6 +31,34 @@ int timer_log_init(const char *filename) {
     return 0;
 }
 
+
+/*
+ * Initializes the CSV log file.
+ * The file is opened in write mode and a header line is written.
+ * Example header:
+ *   function_name,poly_size,time_seconds
+ */
+int error_log_init(const char *filename) {
+    if (filename == NULL) {
+        return -1;
+    }
+
+    timer_log_file = fopen(filename, "w");
+    if (timer_log_file == NULL) {
+        return -1;
+    }
+
+    /* Write CSV header */
+    fprintf(timer_log_file, "function_name,polynomial_size,max_error,l2_error\n");
+    fflush(timer_log_file);
+
+    return 0;
+}
+
+
+
+
+
 int timer_log_init_with_k(const char *filename) {
     if (filename == NULL) {
         return -1;
@@ -47,6 +75,8 @@ int timer_log_init_with_k(const char *filename) {
 
     return 0;
 }
+
+
 
 /*
  * Writes a single row to the CSV file.
@@ -84,6 +114,25 @@ void timer_log_write(const char *func_name, int poly_size, double time_seconds) 
 
     /* CSV line: function_name,poly_size,time_seconds */
     fprintf(timer_log_file, "%s,%d,%.9f\n", func_name, poly_size, time_seconds);
+    fflush(timer_log_file);
+}
+
+/*
+ * Writes a single row to the CSV file.
+ * Each call appends one line with the given data.
+ */
+void error_log(const char *filename,const char * function, int n, double max_error, double l2_error) {
+    if (timer_log_file == NULL) {
+        /* If the file is not initialized, there is nothing we can do. */
+        return;
+    }
+
+    if (filename == NULL) {
+        filename = "unknown";
+    }
+
+    /* CSV line: function_name,poly_size,time_seconds */
+    fprintf(timer_log_file, "%s,%d,%.32f,%.32f\n", function, n, max_error, l2_error);
     fflush(timer_log_file);
 }
 

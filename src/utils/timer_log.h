@@ -15,6 +15,9 @@
 /* CSV format: function_name,poly_size,time_seconds */
 int timer_log_init(const char *filename);
 
+/* CSV format: function_name,max_error,l2_error */
+int error_log_init(const char *filename);
+
 /* CSV format: function_name,poly_size,time_seconds,k */
 int timer_log_init_with_k(const char *filename);
 
@@ -29,6 +32,7 @@ void timer_log_write_cutoff(const char *func_name, int poly_size, double time_se
 
 void timer_log_write(const char *func_name, int poly_size, double time_seconds);
 
+void error_log(const char *filename, const char *function, int n, double max_error, double l2_error);
 
 /*
  * Closes the CSV log file if it is open.

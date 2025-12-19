@@ -46,4 +46,5 @@ int naive_mpfr(int n1, const char **poly1_str, int n2, const char **poly2_str, c
 
 int naive_mpfr_from_double(int n1, double *poly1_d, int n2, double *poly2_d, double *product_d, int precision);
 
+
 #endif /* MULTIPLICATION_METHODS_H */

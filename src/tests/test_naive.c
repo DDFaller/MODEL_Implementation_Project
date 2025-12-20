@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "test_framework.h"
 #include "../multiplication_methods.h"
 #include <stdlib.h>
@@ -62,7 +68,29 @@ TestResult test_naive_multiplication(void) {
         naive(2, poly1, 2, poly2, actual);
         assert_polynomial_equal(&result, "Negative coefficients", 3, expected, actual);
     }
+
+    // Test 6: Larger sparse polynomials with far-apart terms
+    {
+        double poly1[12] = {0};
+        double poly2[9] = {0};
+        double expected[20] = {0};
+        double actual[20];
+
+        poly1[0] = 1.5;
+        poly1[11] = -2.0;
+        poly2[2] = 3.0;
+        poly2[8] = -1.0;
+
+        expected[2] = 4.5;
+        expected[8] = -1.5;
+        expected[13] = -6.0;
+        expected[19] = 2.0;
+
+        naive(12, poly1, 9, poly2, actual);
+        assert_polynomial_equal(&result, "Sparse large polynomials", 20, expected, actual);
+    }
     
     print_test_summary("Naive Multiplication", &result);
     return result;
 }
+

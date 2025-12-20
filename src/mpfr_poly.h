@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #ifndef MPFR_POLY_H
 #define MPFR_POLY_H
 
@@ -55,3 +61,4 @@ product_error_stats_t run_one_case(const double *A_d, size_t nA,
                                    const double *C_toom4);
 
 #endif
+

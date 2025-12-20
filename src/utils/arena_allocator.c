@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "arena_allocator.h"
 
 double *arena_alloc(Arena *a, size_t n) {

@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -456,3 +462,4 @@ for (int i = 0; i < amount_of_sizes; i++) {
 FINISH:
     return STATUS_OK;
 }
+

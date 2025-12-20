@@ -1,6 +1,60 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "test_framework.h"
 #include "../multiplication_methods.h"
 #include <stdlib.h>
+#include <string.h>
+
+static void fill_pattern_c(double *poly, int n) {
+    for (int i = 0; i < n; i++) {
+        double v = 0.15 * (double)(i + 1);
+        if (i % 7 == 0) v = 0.0;
+        poly[i] = (i % 2 == 0) ? v : -v;
+    }
+}
+
+static void fill_pattern_d(double *poly, int n) {
+    for (int i = 0; i < n; i++) {
+        double v = 1.0 + 0.05 * (double)(n - i);
+        if (i % 5 == 0) v = 0.0;
+        poly[i] = (i % 3 == 0) ? v : -v;
+    }
+}
+
+static void assert_tom4_vs_naive(TestResult *result, const char *name,
+                                 int n, const double *poly1, const double *poly2) {
+    const int out_len = 2 * n - 1;
+    double *naive_result = malloc((size_t)out_len * sizeof(double));
+    double *tom4_result = calloc((size_t)(2 * n), sizeof(double));
+    double *a = malloc((size_t)n * sizeof(double));
+    double *b = malloc((size_t)n * sizeof(double));
+
+    if (!naive_result || !tom4_result || !a || !b) {
+        result->failed++;
+        snprintf(result->last_error, sizeof(result->last_error), "Allocation failed in %s", name);
+        free(naive_result);
+        free(tom4_result);
+        free(a);
+        free(b);
+        return;
+    }
+
+    memcpy(a, poly1, (size_t)n * sizeof(double));
+    memcpy(b, poly2, (size_t)n * sizeof(double));
+
+    naive(n, (double *)poly1, n, (double *)poly2, naive_result);
+    tom4(a, b, n, tom4_result);
+
+    assert_polynomial_equal(result, name, out_len, naive_result, tom4_result);
+    free(naive_result);
+    free(tom4_result);
+    free(a);
+    free(b);
+}
 
 TestResult test_tom4_multiplication(void) {
     TestResult result;
@@ -8,85 +62,35 @@ TestResult test_tom4_multiplication(void) {
     
     printf("\nTesting Toom-Cook 4 Multiplication:\n");
     
-    // Test 1: Small polynomial that will use naive base case
+    // Test 1: Cutoff boundary (delegates to Toom-3)
     {
-        double poly1[] = {1.0, 2.0, 3.0, 4.0};
-        double poly2[] = {5.0, 6.0, 7.0, 8.0};
-        double naive_result[7];
-        double tom4_result[7] = {0};
-        
-        double a[4] = {1.0, 2.0, 3.0, 4.0};
-        double b[4] = {5.0, 6.0, 7.0, 8.0};
-        double result_array[8] = {0};
-        
-        naive(4, poly1, 4, poly2, naive_result);
-        tom4(a, b, 4, result_array);
-        
-        for (int i = 0; i < 7; i++) {
-            tom4_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "4x4 vs naive", 7, naive_result, tom4_result);
+        const int n = TOOM4_CUTOFF;
+        double *poly1 = malloc((size_t)n * sizeof(double));
+        double *poly2 = malloc((size_t)n * sizeof(double));
+
+        fill_pattern_c(poly1, n);
+        fill_pattern_d(poly2, n);
+
+        assert_tom4_vs_naive(&result, "cutoff boundary", n, poly1, poly2);
+        free(poly1);
+        free(poly2);
     }
     
-    // Test 2: Size 12 polynomial (will use Toom-Cook 4)
+    // Test 2: Just above cutoff (forces Toom-4 path)
     {
-        double poly1[12], poly2[12];
-        double naive_result[23];
-        double tom4_result[23] = {0};
-        
-        for (int i = 0; i < 12; i++) {
-            poly1[i] = (double)(i + 1);
-            poly2[i] = (double)(12 - i);
-        }
-        
-        double a[12], b[12];
-        double result_array[24] = {0};
-        
-        for (int i = 0; i < 12; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(12, poly1, 12, poly2, naive_result);
-        tom4(a, b, 12, result_array);
-        
-        for (int i = 0; i < 23; i++) {
-            tom4_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "12x12 vs naive", 23, naive_result, tom4_result);
-    }
-    
-    // Test 3: Size 16 polynomial
-    {
-        double poly1[16], poly2[16];
-        double naive_result[31];
-        double tom4_result[31] = {0};
-        
-        for (int i = 0; i < 16; i++) {
-            poly1[i] = (i % 2 == 0) ? 1.0 : -1.0;
-            poly2[i] = (double)(i + 1) * 0.5;
-        }
-        
-        double a[16], b[16];
-        double result_array[32] = {0};
-        
-        for (int i = 0; i < 16; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(16, poly1, 16, poly2, naive_result);
-        tom4(a, b, 16, result_array);
-        
-        for (int i = 0; i < 31; i++) {
-            tom4_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "16x16 vs naive", 31, naive_result, tom4_result);
+        const int n = TOOM4_CUTOFF + 1;
+        double *poly1 = malloc((size_t)n * sizeof(double));
+        double *poly2 = malloc((size_t)n * sizeof(double));
+
+        fill_pattern_c(poly1, n);
+        fill_pattern_d(poly2, n);
+
+        assert_tom4_vs_naive(&result, "cutoff+1 padding", n, poly1, poly2);
+        free(poly1);
+        free(poly2);
     }
     
     print_test_summary("Toom-Cook 4 Multiplication", &result);
     return result;
 }
+

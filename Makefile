@@ -1,3 +1,7 @@
+# MACHADO CARNEIRO FALLER Daniel (21400117)
+# LY Laura (21500152)
+# CRIVELLARO Federico (21502450)
+
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99 -g
 CPPFLAGS = -I$(SRCDIR) -I$(UTILSDIR) -I$(TESTSDIR)
@@ -66,3 +70,4 @@ clean:
 	rm -f $(MAIN_OBJECTS) $(TEST_OBJECTS) $(TARGET) $(TEST_TARGET)
 
 .PHONY: all test clean
+

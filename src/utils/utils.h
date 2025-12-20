@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #ifndef POLYNOMIAL_H
 #define POLYNOMIAL_H
 
@@ -26,3 +32,4 @@ int calculate_error(int poly_size, const double *A, const double *B, double *par
 void print_polynomial(int n, double *coeffs);
 
 #endif /* POLYNOMIAL_H */
+

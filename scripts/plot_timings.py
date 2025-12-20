@@ -1,3 +1,7 @@
+# MACHADO CARNEIRO FALLER Daniel (21400117)
+# LY Laura (21500152)
+# CRIVELLARO Federico (21502450)
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -129,3 +133,4 @@ if __name__ == "__main__":
         selected = [METHOD_FLAGS[name] for name, enabled in flags.items() if enabled]
 
     plot_timings(csv_file=args.csv, selected_methods=selected, out_dir=args.out)
+

@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "multiplication_methods.h"
 #include <mpfr.h>
 
@@ -98,5 +104,6 @@ int naive_mpfr_from_double(int n1, double *poly1_d, int n2, double *poly2_d, dou
     
     return status;
 }
+
 
 

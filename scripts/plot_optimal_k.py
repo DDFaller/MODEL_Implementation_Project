@@ -1,3 +1,7 @@
+# MACHADO CARNEIRO FALLER Daniel (21400117)
+# LY Laura (21500152)
+# CRIVELLARO Federico (21502450)
+
 import pathlib
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -78,3 +82,4 @@ for poly in poly_sizes:
     agg.to_csv(out_csv, index=False)
 
 print(f"Saved plots to: {PLOTS_DIR}")
+

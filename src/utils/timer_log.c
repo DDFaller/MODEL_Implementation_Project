@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "timer_log.h"
 
 #include <string.h>
@@ -146,3 +152,4 @@ void timer_log_close(void) {
         timer_log_file = NULL;
     }
 }
+

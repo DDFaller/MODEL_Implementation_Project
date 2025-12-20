@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #ifndef MULTIPLICATION_METHODS_H
 #define MULTIPLICATIONS_METHODS_H
 #include <stdio.h>

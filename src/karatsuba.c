@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "multiplication_methods.h"
 #include "utils/arena_allocator.h"
 #include <stdlib.h>
@@ -204,3 +210,4 @@ int karatsuba(int n1, const double *poly1, int n2, const double *poly2, double *
     free(ws);
     return st;
 }
+

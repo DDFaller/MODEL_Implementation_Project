@@ -1,6 +1,66 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include "test_framework.h"
 #include "../multiplication_methods.h"
 #include <stdlib.h>
+#include <string.h>
+
+static void fill_pattern_a(double *poly, int n) {
+    for (int i = 0; i < n; i++) {
+        if (i % 6 == 0) {
+            poly[i] = 0.0;
+        } else if (i % 3 == 0) {
+            poly[i] = 1.25;
+        } else if (i % 3 == 1) {
+            poly[i] = -0.75 * (double)(i + 1);
+        } else {
+            poly[i] = 0.5 * (double)(i + 1);
+        }
+    }
+}
+
+static void fill_pattern_b(double *poly, int n) {
+    for (int i = 0; i < n; i++) {
+        double v = 0.2 * (double)(n - i);
+        if (i % 4 == 0) v = 0.0;
+        poly[i] = (i % 2 == 0) ? v : -v;
+    }
+}
+
+static void assert_tom_vs_naive(TestResult *result, const char *name,
+                                int n, const double *poly1, const double *poly2) {
+    const int out_len = 2 * n - 1;
+    double *naive_result = malloc((size_t)out_len * sizeof(double));
+    double *tom_result = calloc((size_t)(2 * n), sizeof(double));
+    double *a = malloc((size_t)n * sizeof(double));
+    double *b = malloc((size_t)n * sizeof(double));
+
+    if (!naive_result || !tom_result || !a || !b) {
+        result->failed++;
+        snprintf(result->last_error, sizeof(result->last_error), "Allocation failed in %s", name);
+        free(naive_result);
+        free(tom_result);
+        free(a);
+        free(b);
+        return;
+    }
+
+    memcpy(a, poly1, (size_t)n * sizeof(double));
+    memcpy(b, poly2, (size_t)n * sizeof(double));
+
+    naive(n, (double *)poly1, n, (double *)poly2, naive_result);
+    tom(a, b, n, tom_result);
+
+    assert_polynomial_equal(result, name, out_len, naive_result, tom_result);
+    free(naive_result);
+    free(tom_result);
+    free(a);
+    free(b);
+}
 
 TestResult test_toom_cook_multiplication(void) {
     TestResult result;
@@ -8,148 +68,49 @@ TestResult test_toom_cook_multiplication(void) {
     
     printf("\nTesting Toom-Cook 3 Multiplication:\n");
     
-    // Test 1: Small polynomial that will use naive base case
+    // Test 1: Cutoff boundary (should fall back to Karatsuba)
     {
-        double poly1[] = {1.0, 2.0, 3.0};
-        double poly2[] = {4.0, 5.0, 6.0};
-        double naive_result[5];
-        double tom_result[5] = {0};
-        
-        // Prepare arrays for tom function
-        double a[3] = {1.0, 2.0, 3.0};
-        double b[3] = {4.0, 5.0, 6.0};
-        double result_array[6] = {0};
-        
-        naive(3, poly1, 3, poly2, naive_result);
-        tom(a, b, 3, result_array);
-        
-        // Copy relevant part
-        for (int i = 0; i < 5; i++) {
-            tom_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "3x3 vs naive", 5, naive_result, tom_result);
+        const int n = TOOM3_CUTOFF;
+        double *poly1 = malloc((size_t)n * sizeof(double));
+        double *poly2 = malloc((size_t)n * sizeof(double));
+
+        fill_pattern_a(poly1, n);
+        fill_pattern_b(poly2, n);
+
+        assert_tom_vs_naive(&result, "cutoff boundary", n, poly1, poly2);
+        free(poly1);
+        free(poly2);
     }
     
-    // Test 2: Size 9 polynomial (will use Toom-Cook)
+    // Test 2: Just above cutoff (divisible by 3)
     {
-        double poly1[9], poly2[9];
-        double naive_result[17];
-        double tom_result[17] = {0};
-        
-        // Initialize with simple pattern
-        for (int i = 0; i < 9; i++) {
-            poly1[i] = (double)(i + 1);
-            poly2[i] = (double)(9 - i);
-        }
-        
-        double a[9], b[9];
-        double result_array[18] = {0};
-        
-        for (int i = 0; i < 9; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(9, poly1, 9, poly2, naive_result);
-        tom(a, b, 9, result_array);
-        
-        // Copy relevant part
-        for (int i = 0; i < 17; i++) {
-            tom_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "9x9 vs naive", 17, naive_result, tom_result);
+        const int n = TOOM3_CUTOFF + 1;
+        double *poly1 = malloc((size_t)n * sizeof(double));
+        double *poly2 = malloc((size_t)n * sizeof(double));
+
+        fill_pattern_a(poly1, n);
+        fill_pattern_b(poly2, n);
+
+        assert_tom_vs_naive(&result, "cutoff+1 divisible", n, poly1, poly2);
+        free(poly1);
+        free(poly2);
     }
     
-    // Test 3: Size 12 polynomial
+    // Test 3: Not divisible by 3 (padding path)
     {
-        double poly1[12], poly2[12];
-        double naive_result[23];
-        double tom_result[23] = {0};
-        
-        // Initialize with alternating pattern
-        for (int i = 0; i < 12; i++) {
-            poly1[i] = (i % 2 == 0) ? 1.0 : -1.0;
-            poly2[i] = (double)(i + 1) * 0.5;
-        }
-        
-        double a[12], b[12];
-        double result_array[24] = {0};
-        
-        for (int i = 0; i < 12; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(12, poly1, 12, poly2, naive_result);
-        tom(a, b, 12, result_array);
-        
-        // Copy relevant part
-        for (int i = 0; i < 23; i++) {
-            tom_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "12x12 vs naive", 23, naive_result, tom_result);
-    }
-    
-    // Test 4: Size 15 polynomial
-    {
-        double poly1[15], poly2[15];
-        double naive_result[29];
-        double tom_result[29] = {0};
-        
-        // Initialize with sequential values
-        for (int i = 0; i < 15; i++) {
-            poly1[i] = (double)(i * 2 + 1);
-            poly2[i] = (double)(15 - i);
-        }
-        
-        double a[15], b[15];
-        double result_array[30] = {0};
-        
-        for (int i = 0; i < 15; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(15, poly1, 15, poly2, naive_result);
-        tom(a, b, 15, result_array);
-        
-        // Copy relevant part
-        for (int i = 0; i < 29; i++) {
-            tom_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "15x15 vs naive", 29, naive_result, tom_result);
-    }
-    
-    // Test 5: Edge case - exactly divisible by 3
-    {
-        double poly1[6] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-        double poly2[6] = {6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
-        double naive_result[11];
-        double tom_result[11] = {0};
-        
-        double a[6], b[6];
-        double result_array[12] = {0};
-        
-        for (int i = 0; i < 6; i++) {
-            a[i] = poly1[i];
-            b[i] = poly2[i];
-        }
-        
-        naive(6, poly1, 6, poly2, naive_result);
-        tom(a, b, 6, result_array);
-        
-        // Copy relevant part
-        for (int i = 0; i < 11; i++) {
-            tom_result[i] = result_array[i];
-        }
-        
-        assert_polynomial_equal(&result, "6x6 vs naive", 11, naive_result, tom_result);
+        const int n = TOOM3_CUTOFF + 2;
+        double *poly1 = malloc((size_t)n * sizeof(double));
+        double *poly2 = malloc((size_t)n * sizeof(double));
+
+        fill_pattern_a(poly1, n);
+        fill_pattern_b(poly2, n);
+
+        assert_tom_vs_naive(&result, "cutoff+2 padding", n, poly1, poly2);
+        free(poly1);
+        free(poly2);
     }
     
     print_test_summary("Toom-Cook 3 Multiplication", &result);
     return result;
 }
+

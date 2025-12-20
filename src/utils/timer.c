@@ -1,3 +1,9 @@
+/*
+ * MACHADO CARNEIRO FALLER Daniel (21400117)
+ * LY Laura (21500152)
+ * CRIVELLARO Federico (21502450)
+ */
+
 #include <stdio.h>
 #include <sys/time.h>
 
@@ -61,3 +67,4 @@ double save_timer(void) {
 void print_timer(void) {
     printf("Elapsed time: %f seconds\n", last_elapsed);
 }
+
